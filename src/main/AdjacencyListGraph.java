@@ -6,7 +6,6 @@ public class AdjacencyListGraph {
 
     private static int numEdges;
     private static int total;
-    private static int numRemove;
     private final LinkedList<Edge>[] adj;
 
     public AdjacencyListGraph(int vertex) {
@@ -80,7 +79,7 @@ public class AdjacencyListGraph {
         adj.printList();
 
         System.out.print("\nSpecify the number of edges you want removed: ");
-        numRemove = input.nextInt();
+        int numRemove = input.nextInt();
         while (numRemove > numEdges) {
             System.out.println("It's not possible to remove this number of edges. Try again! ");
             System.out.print("Specify the number of edges you want removed: ");
