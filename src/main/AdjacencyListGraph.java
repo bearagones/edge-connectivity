@@ -1,8 +1,12 @@
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class AdjacencyListGraph {
 
+    private static int numEdges;
+    private static int total;
+    private static int numRemove;
     private final LinkedList<Edge>[] adj;
 
     public AdjacencyListGraph(int vertex) {
@@ -21,7 +25,6 @@ public class AdjacencyListGraph {
 
     public void removeEdge(int origin, int destination) {
         Edge foundEdge = null;
-        // insert code to choose shorter list between origin and destination
         for (Edge edge : adj[origin]) {
             if (edge.opposite(destination) == origin) {
                 foundEdge = edge;
@@ -30,22 +33,19 @@ public class AdjacencyListGraph {
         }
         adj[origin].remove(foundEdge);
         adj[destination].remove(foundEdge);
-    }
-
-    public int numEdge() {
-        return adj.length;
+        total--;
     }
 
     public void printList() {
-        System.out.print("Current Adjacency List:");
-        for (int i = 1; i < numEdge(); i++) {
+        System.out.print("\nCurrent Adjacency List:");
+        for (int i = 1; i <= numEdges; i++) {
             System.out.print("\n" + (i) + " => [");
             for (Edge edge : adj[i]) {
                 System.out.print("(" + i + "," + edge.opposite(i) + ")");
             }
             System.out.print("]");
         }
-        System.out.println("\nNumber of edges: " + (numEdge() - 1) + "\n");
+        System.out.println("\nNumber of edges: " + total);
     }
 
     public static void main(String[] args) {
@@ -57,7 +57,8 @@ public class AdjacencyListGraph {
         AdjacencyListGraph adj = new AdjacencyListGraph(vertices);
 
         System.out.print("Specify the number of edges: ");
-        int numEdges = input.nextInt();
+        numEdges = input.nextInt();
+        total = numEdges;
         while (numEdges > ((vertices*(vertices-1)))/2) {
             System.out.println("It's not possible to have this number of edges. Try again! ");
             System.out.print("Specify the number of edges: ");
@@ -75,6 +76,29 @@ public class AdjacencyListGraph {
 
             adj.insertEdge(origin, destination);
         }
+
+        adj.printList();
+
+        System.out.print("\nSpecify the number of edges you want removed: ");
+        numRemove = input.nextInt();
+        while (numRemove > numEdges) {
+            System.out.println("It's not possible to remove this number of edges. Try again! ");
+            System.out.print("Specify the number of edges you want removed: ");
+            numRemove = input.nextInt();
+        }
+
+        System.out.println("Type in the edges using <origin,destination>");
+        int r = 1;
+        while (r <= numRemove) {
+            System.out.print("Edge #" + r + ": ");
+            String[] inputEdge = input.next().split(",");
+            int origin = Integer.parseInt(inputEdge[0]);
+            int destination = Integer.parseInt(inputEdge[1]);
+            r++;
+
+            adj.removeEdge(origin, destination);
+        }
+
         adj.printList();
     }
 }
