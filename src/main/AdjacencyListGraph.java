@@ -38,6 +38,8 @@ public class AdjacencyListGraph {
         adj[destination].add(edge);
     }
 
+    // handle duplicate edges
+    // handle exceptions using try-catch blocks
     private static void add(Scanner input, AdjacencyListGraph adj) {
         System.out.println("Type in the edges using <origin,destination>");
         int k = 1;
@@ -47,7 +49,6 @@ public class AdjacencyListGraph {
             int origin = Integer.parseInt(inputEdge[0]);
             int destination = Integer.parseInt(inputEdge[1]);
             k++;
-
             adj.insertEdge(origin, destination);
         }
         adj.printList();
