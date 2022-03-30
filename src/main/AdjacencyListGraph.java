@@ -1,5 +1,7 @@
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.io.File;
 
 public class AdjacencyListGraph {
 
@@ -15,20 +17,22 @@ public class AdjacencyListGraph {
         }
     }
 
-    private static AdjacencyListGraph createGraph(Scanner input) {
-        System.out.print("Specify the number of vertices: ");
-        int vertices = input.nextInt();
+    private static AdjacencyListGraph createGraph(File file) throws FileNotFoundException {
+        Scanner scan = new Scanner(file);
 
-        System.out.print("Specify the number of edges: ");
-        numEdges = input.nextInt();
+        int vertices = scan.nextInt();
+        scan.nextLine();
+        numEdges = scan.nextInt();
         total = numEdges;
-        while (numEdges > ((vertices*(vertices-1)))/2) {
-            System.out.println("It's not possible to have this number of edges. Try again! ");
-            System.out.print("Specify the number of edges: ");
-            numEdges = input.nextInt();
-        }
+
         AdjacencyListGraph adj = new AdjacencyListGraph(vertices);
-        add(input,adj);
+
+        scan.nextLine();
+        for (int i = 0; i < numEdges; i++) {
+            String edge = scan.nextLine();
+            add(edge,adj);
+        }
+        adj.printList();
         return adj;
     }
 
@@ -40,18 +44,11 @@ public class AdjacencyListGraph {
 
     // handle duplicate edges
     // handle exceptions using try-catch blocks
-    private static void add(Scanner input, AdjacencyListGraph adj) {
-        System.out.println("Type in the edges using <origin,destination>");
-        int k = 1;
-        while (k <= numEdges) {
-            System.out.print("Edge #" + k + ": ");
-            String[] inputEdge = input.next().split(",");
-            int origin = Integer.parseInt(inputEdge[0]);
-            int destination = Integer.parseInt(inputEdge[1]);
-            k++;
-            adj.insertEdge(origin, destination);
-        }
-        adj.printList();
+    private static void add(String edge, AdjacencyListGraph adj) {
+        String[] inputEdge = edge.split(",");
+        int origin = Integer.parseInt(inputEdge[0]);
+        int destination = Integer.parseInt(inputEdge[1]);
+        adj.insertEdge(origin, destination);
     }
 
     public void removeEdge(int origin, int destination) {
@@ -113,7 +110,7 @@ public class AdjacencyListGraph {
 
     public void printList() {
         System.out.print("\nCurrent Adjacency List:");
-        for (int i = 1; i <= numEdges; i++) {
+        for (int i = 1; i < numEdges; i++) {
             System.out.print("\n" + i + " => [");
             for (Edge edge : adj[i]) {
                 System.out.print("(" + i + "," + edge.opposite(i) + ")");
@@ -123,17 +120,17 @@ public class AdjacencyListGraph {
         System.out.println("\nNumber of edges: " + total);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         boolean close = false;
         Scanner input = new Scanner(System.in);
+        File file = new File("resources/Test Case 01 Connected.txt");
 
-        AdjacencyListGraph graph = createGraph(input);
+        AdjacencyListGraph graph = createGraph(file);
 
         while (!close) {
-            System.out.println("\nPlease type one of the following actions to perform: 'add', 'remove', 'neighbor', 'exit'");
+            System.out.println("\nPlease type one of the following actions to perform: 'remove', 'neighbor', 'exit'");
             String userChoice = input.next();
             switch (userChoice.toLowerCase()) {
-                case "add" -> add(input,graph);
                 case "remove" -> remove(input,graph);
                 case "neighbor" -> neighborOf(input,graph);
                 case "exit" -> close = true;
