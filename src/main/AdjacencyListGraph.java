@@ -7,6 +7,7 @@ public class AdjacencyListGraph {
 
     private static int numEdges;
     private static int total;
+    private static int vertices;
     private final LinkedList<Edge>[] adj;
 
     public AdjacencyListGraph(int vertex) {
@@ -20,7 +21,7 @@ public class AdjacencyListGraph {
     private static AdjacencyListGraph createGraph(File file) throws FileNotFoundException {
         Scanner scan = new Scanner(file);
 
-        int vertices = scan.nextInt();
+        vertices = scan.nextInt();
         scan.nextLine();
         numEdges = scan.nextInt();
         total = numEdges;
@@ -110,7 +111,7 @@ public class AdjacencyListGraph {
 
     public void printList() {
         System.out.print("\nCurrent Adjacency List:");
-        for (int i = 1; i < numEdges; i++) {
+        for (int i = 1; i <= vertices; i++) {
             System.out.print("\n" + i + " => [");
             for (Edge edge : adj[i]) {
                 System.out.print("(" + i + "," + edge.opposite(i) + ")");
@@ -123,7 +124,7 @@ public class AdjacencyListGraph {
     public static void main(String[] args) throws FileNotFoundException {
         boolean close = false;
         Scanner input = new Scanner(System.in);
-        File file = new File("resources/Test Case 01 Connected.txt");
+        File file = new File("resources/TestCase10.txt");
 
         AdjacencyListGraph graph = createGraph(file);
 
