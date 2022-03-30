@@ -43,8 +43,6 @@ public class AdjacencyListGraph {
         adj[destination].add(edge);
     }
 
-    // handle duplicate edges
-    // handle exceptions using try-catch blocks
     private static void add(String edge, AdjacencyListGraph adj) {
         String[] inputEdge = edge.split(",");
         int origin = Integer.parseInt(inputEdge[0]);
