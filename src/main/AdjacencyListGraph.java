@@ -120,6 +120,7 @@ public class AdjacencyListGraph {
 
     public void search(int vertex) {
         boolean[] marked = new boolean[vertices];
+        boolean isConnected = true;
         marked[vertex - 1] = true;
         ArrayList<Integer> markedVertices = new ArrayList();
         markedVertices.add(vertex);
@@ -135,10 +136,17 @@ public class AdjacencyListGraph {
                 }
             }
         }
-        if (Objects.equals(marked, false)) {
-            System.out.println("\nThe graph is not connected.");
-        } else {
+        for (boolean b : marked) {
+            if (!b) {
+                isConnected = false;
+                break;
+            }
+        }
+
+        if (isConnected) {
             System.out.println("\nThe graph is connected.");
+        } else {
+            System.out.println("\nThe graph is not connected.");
         }
     }
 
