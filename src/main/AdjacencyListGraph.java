@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 
@@ -94,6 +95,7 @@ public class AdjacencyListGraph {
             System.out.print("(" + vertex + "," + edge.opposite(vertex) + ")");
         }
         System.out.print("]");
+        System.out.println();
     }
 
     private static void neighborOf(Scanner input, AdjacencyListGraph adj) {
@@ -104,7 +106,33 @@ public class AdjacencyListGraph {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("No such vertex exists. Try again! ");
         }
-        adj.printList();
+    }
+
+    public void search(int vertex) {
+        boolean[] marked = new boolean[vertices];
+        marked[vertex - 1] = true;
+        ArrayList<Integer> markedVertices = new ArrayList();
+        markedVertices.add(vertex);
+
+        System.out.print("Reachable vertices from [" + vertex + "]: ");
+        while (!markedVertices.isEmpty()) {
+            int markedVertex = markedVertices.remove(0);
+            System.out.print("[" + markedVertex + "] ");
+            for (Edge edge : adj[markedVertex]) {
+                if (!marked[edge.opposite(markedVertex) - 1]) {
+                    markedVertices.add(edge.opposite(markedVertex));
+                    marked[edge.opposite(markedVertex) - 1] = true;
+                }
+            }
+        }
+        System.out.println();
+    }
+
+    private static void vertexSearch(Scanner input, AdjacencyListGraph adj) {
+
+        System.out.print("\nSpecify the vertex that you would like to search: ");
+        int vertex = input.nextInt();
+        adj.search(vertex);
     }
 
     public void printList() {
@@ -121,17 +149,18 @@ public class AdjacencyListGraph {
 
     public static void main(String[] args) throws FileNotFoundException {
         boolean close = false;
-        Scanner input = new Scanner(System.in);
-        File file = new File("resources/TestCase10.txt");
+        File file = new File("resources/TestCase01.txt");
 
         AdjacencyListGraph graph = createGraph(file);
 
         while (!close) {
-            System.out.println("\nPlease type one of the following actions to perform: 'remove', 'neighbor', 'exit'");
-            String userChoice = input.next();
+            System.out.print("\nPlease type one of the following actions to perform: 'remove', 'neighbor', 'search vertex', 'exit': ");
+            Scanner input = new Scanner(System.in);
+            String userChoice = input.nextLine();
             switch (userChoice.toLowerCase()) {
                 case "remove" -> remove(input,graph);
                 case "neighbor" -> neighborOf(input,graph);
+                case "search vertex" -> vertexSearch(input, graph);
                 case "exit" -> close = true;
                 default -> System.out.println("No such action exists.");
             }
