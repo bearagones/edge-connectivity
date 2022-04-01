@@ -52,7 +52,7 @@ public class AdjacencyListGraph {
         int numAdd = input.nextInt();
         int a = 1;
         while (a <= numAdd) {
-            System.out.println("Edge #" + a + ": ");
+            System.out.print("Edge #" + a + ": ");
             String[] inputEdge = input.next().split(",");
             int origin = Integer.parseInt(inputEdge[0]);
             int destination = Integer.parseInt(inputEdge[1]);
