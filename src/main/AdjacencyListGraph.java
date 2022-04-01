@@ -32,7 +32,10 @@ public class AdjacencyListGraph {
         scan.nextLine();
         for (int i = 0; i < numEdges; i++) {
             String edge = scan.nextLine();
-            add(edge,adj);
+            String[] inputEdge = edge.split(",");
+            int origin = Integer.parseInt(inputEdge[0]);
+            int destination = Integer.parseInt(inputEdge[1]);
+            adj.insertEdge(origin, destination);
         }
         adj.printList();
         return adj;
@@ -44,11 +47,20 @@ public class AdjacencyListGraph {
         adj[destination].add(edge);
     }
 
-    private static void add(String edge, AdjacencyListGraph adj) {
-        String[] inputEdge = edge.split(",");
-        int origin = Integer.parseInt(inputEdge[0]);
-        int destination = Integer.parseInt(inputEdge[1]);
-        adj.insertEdge(origin, destination);
+    private static void add(Scanner input, AdjacencyListGraph adj) {
+        System.out.print("\nSpecify the number of edges you want to add: ");
+        int numAdd = input.nextInt();
+        int a = 1;
+        while (a <= numAdd) {
+            System.out.println("Edge #" + a + ": ");
+            String[] inputEdge = input.next().split(",");
+            int origin = Integer.parseInt(inputEdge[0]);
+            int destination = Integer.parseInt(inputEdge[1]);
+            a++;
+            adj.insertEdge(origin, destination);
+        }
+        total++;
+        adj.printList();
     }
 
     public void removeEdge(int origin, int destination) {
@@ -154,10 +166,11 @@ public class AdjacencyListGraph {
         AdjacencyListGraph graph = createGraph(file);
 
         while (!close) {
-            System.out.print("\nPlease type one of the following actions to perform: 'remove', 'neighbor', 'search vertex', 'exit': ");
+            System.out.print("\nPlease type one of the following actions to perform: 'add', 'remove', 'neighbor', 'search vertex', 'exit': ");
             Scanner input = new Scanner(System.in);
             String userChoice = input.nextLine();
             switch (userChoice.toLowerCase()) {
+                case "add" -> add(input,graph);
                 case "remove" -> remove(input,graph);
                 case "neighbor" -> neighborOf(input,graph);
                 case "search vertex" -> vertexSearch(input, graph);
