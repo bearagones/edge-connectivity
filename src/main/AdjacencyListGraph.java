@@ -156,6 +156,18 @@ public class AdjacencyListGraph {
         adj.search(vertex);
     }
 
+    public void search2(int origin, int destination) {
+
+    }
+
+    private static void pathSearch(Scanner input, AdjacencyListGraph adj) {
+        System.out.println("Specify the origin vertex that you would like to start at: ");
+        int origin = input.nextInt();
+        System.out.println("Specify the destination vertex that you would like to end at: ");
+        int destination = input.nextInt();
+        adj.search2(origin, destination);
+    }
+
     public void printList() {
         System.out.print("\nCurrent Adjacency List:");
         for (int i = 1; i <= vertices; i++) {
