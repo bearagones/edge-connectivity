@@ -1,8 +1,6 @@
-import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class AdjacencyListGraph {
 
@@ -137,11 +135,14 @@ public class AdjacencyListGraph {
                 }
             }
         }
-        System.out.println();
+        if (Objects.equals(marked, false)) {
+            System.out.println("\nThe graph is not connected.");
+        } else {
+            System.out.println("\nThe graph is connected.");
+        }
     }
 
     private static void vertexSearch(Scanner input, AdjacencyListGraph adj) {
-
         System.out.print("\nSpecify the vertex that you would like to search: ");
         int vertex = input.nextInt();
         adj.search(vertex);
