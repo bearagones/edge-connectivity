@@ -1,20 +1,25 @@
 public class Edge {
-    private int origin;
-    private int destination;
+    private final Vertex origin;
+    private final Vertex destination;
     private int label;
 
-    public Edge(int origin, int destination) {
+    public Edge(Vertex origin, Vertex destination) {
         this.origin = origin;
         this.destination = destination;
     }
 
-    public int opposite(int w) {
+    public Vertex opposite(Vertex w) {
         if (w == origin) {
             return destination;
         } else if (w == destination) {
             return origin;
         } else {
-            return -1;
+            return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + origin + "," + destination + ")";
     }
 }
