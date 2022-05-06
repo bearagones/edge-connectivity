@@ -319,7 +319,7 @@ public class AdjacencyListGraph {
         while (!close) {
             System.out.print("\nPlease type one of the following actions to perform: ");
             Scanner input = new Scanner(System.in);
-            System.out.println("'add edge', 'remove edge', 'add vertex', 'neighbor', 'search vertex', 'search path', 'check bridge', 'exit'");
+            System.out.println("'add edge', 'remove edge', 'add vertex', 'neighbor', 'search vertex', 'search path', 'search bridge', 'exit'");
             String userChoice = input.nextLine();
             switch (userChoice.toLowerCase()) {
                 case "add edge" -> addEdge(input,graph);
