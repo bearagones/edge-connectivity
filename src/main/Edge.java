@@ -18,6 +18,14 @@ public class Edge {
         }
     }
 
+    public Vertex getOrigin() {
+        return origin;
+    }
+
+    public Vertex getDestination() {
+        return destination;
+    }
+
     @Override
     public String toString() {
         return "(" + origin + "," + destination + ")";
