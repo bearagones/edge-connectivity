@@ -83,7 +83,7 @@ public class AdjacencyListGraph {
 
     //Inserts an edge in the Adjacency List
     private void insertEdge(Vertex origin, Vertex destination) {
-        Edge edge = new Edge(origin, destination);
+        Edge edge = new Edge(origin, destination, 0);
         origin.getEdgeList().add(edge);
         if (!isDirected) {
             destination.getEdgeList().add(edge);
@@ -296,6 +296,20 @@ public class AdjacencyListGraph {
 //        return false;
 //    }
 
+    private static void createResidualGraph(AdjacencyListGraph adj) {
+        Scanner input = new Scanner(System.in);
+        pathSearch(input, adj);
+        //search for a path from origin to destination -> searchPath
+        //for each unused edge in the path search
+        //reverse the edge
+        //mark as used -> '1'
+
+        //find another path using unused edges (call pathSearch again?)
+        //repeat process until no other paths available and increment path number for edge connectivity
+        //if edge is undirected/goes both ways then delete
+        //return graph made up of used edges
+    }
+
     //Prints the current Adjacency List
     private void printList() {
         System.out.print("\nCurrent Adjacency List:");
@@ -329,6 +343,7 @@ public class AdjacencyListGraph {
                 case "search vertex" -> vertexSearch(input, graph);
                 case "search path" -> pathSearch(input, graph);
                 case "search bridge" -> searchBridge(graph);
+                case "edge connectivity" -> createResidualGraph(graph);
                 case "exit" -> close = true;
                 default -> System.out.println("No such action exists.");
             }
