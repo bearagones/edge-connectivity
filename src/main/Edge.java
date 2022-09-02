@@ -3,9 +3,10 @@ public class Edge {
     private final Vertex destination;
     private int label;
 
-    public Edge(Vertex origin, Vertex destination) {
+    public Edge(Vertex origin, Vertex destination, int label) {
         this.origin = origin;
         this.destination = destination;
+        this.label = label;
     }
 
     public Vertex opposite(Vertex w) {
@@ -24,6 +25,14 @@ public class Edge {
 
     public Vertex getDestination() {
         return destination;
+    }
+
+    public int getLabel() {
+        return label;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
     }
 
     @Override
