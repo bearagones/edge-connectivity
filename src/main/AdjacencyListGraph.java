@@ -288,26 +288,47 @@ public class AdjacencyListGraph {
         }
     }
 
-//    private boolean isTwoEdgeConnected(AdjacencyListGraph adj) {
-//        //for each edge in the graph
-//        for (Edge edge: adj.)
-//            // if edge is disconnected, return false
-//            // else return true
-//        return false;
-//    }
+    private static void createResidualGraph(int vertices, int edges) {
 
-    private static void createResidualGraph(AdjacencyListGraph adj) {
-        Scanner input = new Scanner(System.in);
-        pathSearch(input, adj);
-        //search for a path from origin to destination -> searchPath
-        //for each unused edge in the path search
-        //reverse the edge
-        //mark as used -> '1'
+    }
+    private Edge getEdge(Vertex origin, Vertex destination) {
+        Edge foundEdge = null;
+        for (Edge edge : origin.getEdgeList()) {
+            if (edge.getOrigin() == origin && edge.getDestination() == destination) {
+                foundEdge = edge;
+            }
+        }
+        return foundEdge;
+    }
 
-        //find another path using unused edges (call pathSearch again?)
-        //repeat process until no other paths available and increment path number for edge connectivity
-        //if edge is undirected/goes both ways then delete
-        //return graph made up of used edges
+    private void augmentFlow(ArrayList<Vertex> vertexPath) {
+        for (Vertex vertex : vertexList) {
+            
+        }
+    }
+
+    private int getNumberOfPaths(Vertex origin, Vertex destination) {
+        int pathCount = 0;
+        while (true) {
+            createResidualGraph(totalVertices, totalEdges);
+            ArrayList<Vertex> vertexPath = search2(origin, destination);
+            if (vertexPath == null) {
+                break;
+            }
+            augmentFlow(vertexPath);
+            pathCount++;
+        }
+        return pathCount;
+    }
+
+    private static void edgeConnectivity(Scanner input, AdjacencyListGraph adj) {
+        System.out.println("Specify the origin vertex: ");
+        int originLabel = input.nextInt();
+        Vertex origin = vertexList.get(originLabel - 1);
+        System.out.println("Specify the destination vertex: ");
+        int destinationLabel = input.nextInt();
+        Vertex destination = vertexList.get(destinationLabel - 1);
+        adj.getNumberOfPaths(origin, destination);
     }
 
     //Prints the current Adjacency List
@@ -327,13 +348,12 @@ public class AdjacencyListGraph {
     public static void main(String[] args) throws FileNotFoundException {
         boolean close = false;
         File file = new File(args[0]);
-
         AdjacencyListGraph graph = createGraph(file);
 
         while (!close) {
             System.out.print("\nPlease type one of the following actions to perform: ");
             Scanner input = new Scanner(System.in);
-            System.out.println("'add edge', 'remove edge', 'add vertex', 'neighbor', 'search vertex', 'search path', 'search bridge', 'exit'");
+            System.out.println("'add edge', 'remove edge', 'add vertex', 'neighbor', 'search vertex', 'search path', 'search bridge', 'edge connectivity', 'exit'");
             String userChoice = input.nextLine();
             switch (userChoice.toLowerCase()) {
                 case "add edge" -> addEdge(input,graph);
@@ -343,7 +363,7 @@ public class AdjacencyListGraph {
                 case "search vertex" -> vertexSearch(input, graph);
                 case "search path" -> pathSearch(input, graph);
                 case "search bridge" -> searchBridge(graph);
-                case "edge connectivity" -> createResidualGraph(graph);
+                case "edge connectivity" -> edgeConnectivity(input, graph);
                 case "exit" -> close = true;
                 default -> System.out.println("No such action exists.");
             }
