@@ -11,12 +11,11 @@ public class Vertex {
         this.edgeList = new LinkedList<>();
     }
 
-    public void setParent(Vertex parent) {
-        this.parent = parent;
-    }
-
     public Vertex getParent() {
         return parent;
+    }
+    public void setParent(Vertex parent) {
+        this.parent = parent;
     }
 
     public int getLabel() {
