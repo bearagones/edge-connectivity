@@ -8,8 +8,8 @@ public class AdjacencyListGraph {
     private static int totalVertices;
     private static int totalEdges;
     private static boolean isDirected;
-    private static final ArrayList<Vertex> vertexList = new ArrayList<>();
-    private static final ArrayList<Edge> edgeList = new ArrayList<>();
+    private ArrayList<Vertex> vertexList = new ArrayList<>();
+    private ArrayList<Edge> edgeList = new ArrayList<>();
 
     //Creates an Adjacency List Graph with the number of vertices
     public AdjacencyListGraph(int vertices) {
@@ -41,9 +41,10 @@ public class AdjacencyListGraph {
             String[] inputEdge = edge.split(",");
             int originLabel = Integer.parseInt(inputEdge[0]);
             int destinationLabel = Integer.parseInt(inputEdge[1]);
-            Vertex origin = vertexList.get(originLabel - 1);
-            Vertex destination = vertexList.get(destinationLabel - 1);
-            adj.insertEdge(origin, destination);
+            int usedLabel = Integer.parseInt(inputEdge[2]);
+            Vertex origin = adj.vertexList.get(originLabel - 1);
+            Vertex destination = adj.vertexList.get(destinationLabel - 1);
+            adj.insertEdge(origin, destination, usedLabel);
         }
         adj.printList();
         return adj;
@@ -82,13 +83,17 @@ public class AdjacencyListGraph {
     }
 
     //Inserts an edge in the Adjacency List
-    private void insertEdge(Vertex origin, Vertex destination) {
-        Edge edge = new Edge(origin, destination, 0);
+    private void insertEdge(Vertex origin, Vertex destination, int label) {
+        Edge edge = new Edge(origin, destination, label);
         origin.getEdgeList().add(edge);
         if (!isDirected) {
             destination.getEdgeList().add(edge);
         }
         edgeList.add(edge);
+    }
+
+    private void insertEdge(Vertex origin, Vertex destination) {
+
     }
 
     //Inserts an edge that is specified by the user
@@ -101,10 +106,11 @@ public class AdjacencyListGraph {
             String[] inputEdge = input.next().split(",");
             int originLabel = Integer.parseInt(inputEdge[0]);
             int destinationLabel = Integer.parseInt(inputEdge[1]);
-            Vertex origin = vertexList.get(originLabel - 1);
-            Vertex destination = vertexList.get(destinationLabel - 1);
+            int usedLabel = Integer.parseInt(inputEdge[2]);
+            Vertex origin = adj.vertexList.get(originLabel - 1);
+            Vertex destination = adj.vertexList.get(destinationLabel - 1);
             a++;
-            adj.insertEdge(origin, destination);
+            adj.insertEdge(origin, destination, usedLabel);
         }
         totalEdges++;
         adj.printList();
@@ -145,8 +151,8 @@ public class AdjacencyListGraph {
                 String[] inputEdge = input.next().split(",");
                 int originLabel = Integer.parseInt(inputEdge[0]);
                 int destinationLabel = Integer.parseInt(inputEdge[1]);
-                Vertex origin = vertexList.get(originLabel - 1);
-                Vertex destination = vertexList.get(destinationLabel - 1);
+                Vertex origin = adj.vertexList.get(originLabel - 1);
+                Vertex destination = adj.vertexList.get(destinationLabel - 1);
                 r++;
 
                 adj.deleteEdge(origin, destination);
@@ -169,8 +175,8 @@ public class AdjacencyListGraph {
         System.out.print("\nSpecify the vertex to see the neighboring vertices: ");
         int seeVertex = input.nextInt();
         try {
-            adj.getNeighbors(vertexList.get(seeVertex - 1));
-            for (Vertex vertex : adj.getNeighbors(vertexList.get(seeVertex - 1))) {
+            adj.getNeighbors(adj.vertexList.get(seeVertex - 1));
+            for (Vertex vertex : adj.getNeighbors(adj.vertexList.get(seeVertex - 1))) {
                 System.out.print("[" + vertex + "] ");
             }
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -210,7 +216,7 @@ public class AdjacencyListGraph {
     private static void vertexSearch(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the vertex that you would like to search: ");
         int v = input.nextInt();
-        Vertex vertex = vertexList.get(v - 1);
+        Vertex vertex = adj.vertexList.get(v - 1);
         boolean isConnected = adj.search(vertex);
 
         //System.out.print("Reachable vertices from [" + vertex + "]: ");
@@ -263,17 +269,17 @@ public class AdjacencyListGraph {
     private static void pathSearch(Scanner input, AdjacencyListGraph adj) {
         System.out.println("Specify the origin vertex that you would like to start at: ");
         int originLabel = input.nextInt();
-        Vertex origin = vertexList.get(originLabel - 1);
+        Vertex origin = adj.vertexList.get(originLabel - 1);
         System.out.println("Specify the destination vertex that you would like to end at: ");
         int destinationLabel = input.nextInt();
-        Vertex destination = vertexList.get(destinationLabel - 1);
+        Vertex destination = adj.vertexList.get(destinationLabel - 1);
         adj.search2(origin, destination);
 
     }
 
     //Searches for bridges in the Adjacency List
     private static void searchBridge(AdjacencyListGraph adj) {
-        ArrayList<Edge> edgeCopy = new ArrayList<>(edgeList);
+        ArrayList<Edge> edgeCopy = new ArrayList<>(adj.edgeList);
 
         for (Edge edge : edgeCopy) {
             Vertex origin = edge.getOrigin();
@@ -284,12 +290,20 @@ public class AdjacencyListGraph {
                 System.out.print(edge);
                 System.out.print("]");
             }
-            adj.insertEdge(origin, destination);
+            adj.insertEdge(origin, destination, edge.getLabel());
         }
     }
 
-    private static void createResidualGraph(int vertices, int edges) {
-
+    private static AdjacencyListGraph createResidualGraph(int vertices, int edges) {
+        AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertices);
+        for (Edge edge : residualGraph.edgeList) {
+            if (edge.getLabel() == 1) {
+                residualGraph.insertEdge(edge.getDestination(), edge.getOrigin(), 0); //v -> u
+            } else {
+                residualGraph.insertEdge(edge.getOrigin(), edge.getDestination(), 0); //u -> v
+            }
+        }
+        return residualGraph;
     }
     private Edge getEdge(Vertex origin, Vertex destination) {
         Edge foundEdge = null;
@@ -302,15 +316,22 @@ public class AdjacencyListGraph {
     }
 
     private void augmentFlow(ArrayList<Vertex> vertexPath) {
-        for (Vertex vertex : vertexList) {
-            
+        for (int i = 0; i < vertexPath.size() - 1; i++) {
+            Vertex origin = vertexPath.get(i);
+            Vertex destination = vertexPath.get(i + 1);
+            Edge edge = getEdge(origin, destination);
+            if (edge.getLabel() == 0) { //edge.setLabel(1-edge.getLabel());
+                edge.setLabel(1);
+            } else {
+                edge.setLabel(0);
+            }
         }
     }
 
     private int getNumberOfPaths(Vertex origin, Vertex destination) {
         int pathCount = 0;
         while (true) {
-            createResidualGraph(totalVertices, totalEdges);
+            AdjacencyListGraph residualGraph = createResidualGraph(totalVertices, totalEdges);
             ArrayList<Vertex> vertexPath = search2(origin, destination);
             if (vertexPath == null) {
                 break;
@@ -324,10 +345,10 @@ public class AdjacencyListGraph {
     private static void edgeConnectivity(Scanner input, AdjacencyListGraph adj) {
         System.out.println("Specify the origin vertex: ");
         int originLabel = input.nextInt();
-        Vertex origin = vertexList.get(originLabel - 1);
+        Vertex origin = adj.vertexList.get(originLabel - 1);
         System.out.println("Specify the destination vertex: ");
         int destinationLabel = input.nextInt();
-        Vertex destination = vertexList.get(destinationLabel - 1);
+        Vertex destination = adj.vertexList.get(destinationLabel - 1);
         adj.getNumberOfPaths(origin, destination);
     }
 
