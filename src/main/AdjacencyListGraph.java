@@ -295,8 +295,11 @@ public class AdjacencyListGraph {
     }
 
     private static AdjacencyListGraph createResidualGraph(int vertices, int edges) {
-        AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertices);
-        for (Edge edge : residualGraph.edgeList) {
+        AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertices); // creates a residual graph with same # of vertices and edges (not specified)
+        for (Vertex vertex: residualGraph.vertexList) {
+            //need to add edges to the edgelist of each vertex
+        }
+        for (Edge edge : residualGraph.edgeList) { // edgeList is currently empty - needs to be scanned from file first
             if (edge.getLabel() == 1) {
                 residualGraph.insertEdge(edge.getDestination(), edge.getOrigin(), 0); //v -> u
             } else {
@@ -305,10 +308,11 @@ public class AdjacencyListGraph {
         }
         return residualGraph;
     }
-    private Edge getEdge(Vertex origin, Vertex destination) {
+    private Edge getEdge(Vertex origin, Vertex destination) { // works as expected
         Edge foundEdge = null;
         for (Edge edge : origin.getEdgeList()) {
-            if (edge.getOrigin() == origin && edge.getDestination() == destination) {
+            if ((edge.getOrigin() == origin && edge.getDestination() == destination && edge.getLabel() == 0) ||
+                    (edge.getOrigin() == destination && edge.getDestination() == origin && edge.getLabel() == 1)) {
                 foundEdge = edge;
             }
         }
@@ -320,7 +324,7 @@ public class AdjacencyListGraph {
             Vertex origin = vertexPath.get(i);
             Vertex destination = vertexPath.get(i + 1);
             Edge edge = getEdge(origin, destination);
-            if (edge.getLabel() == 0) { //edge.setLabel(1-edge.getLabel());
+            if (edge.getLabel() == 0) { //edge.setLabel(1-edge.getLabel()); alternative
                 edge.setLabel(1);
             } else {
                 edge.setLabel(0);
@@ -331,7 +335,7 @@ public class AdjacencyListGraph {
     private int getNumberOfPaths(Vertex origin, Vertex destination) {
         int pathCount = 0;
         while (true) {
-            AdjacencyListGraph residualGraph = createResidualGraph(totalVertices, totalEdges);
+            AdjacencyListGraph residualGraph = createResidualGraph(totalVertices, totalEdges); // unsure what to do with the residualGraph here
             ArrayList<Vertex> vertexPath = search2(origin, destination);
             if (vertexPath == null) {
                 break;
