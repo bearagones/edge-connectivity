@@ -4,9 +4,7 @@ import java.io.FileNotFoundException;
 
 public class AdjacencyListGraph {
 
-    private static int numEdges;
-    private static int totalVertices;
-    private static int totalEdges;
+    private int numEdges;
     private static boolean isDirected;
     private ArrayList<Vertex> vertexList = new ArrayList<>();
     private ArrayList<Edge> edgeList = new ArrayList<>();
@@ -20,6 +18,14 @@ public class AdjacencyListGraph {
         }
     }
 
+    public AdjacencyListGraph(int vertices, boolean isDirected) {
+        //Creates a vertex for each vertex
+        for (int i = 0; i < vertices; i++) {
+            vertexList.add(new Vertex(i + 1));
+        }
+        this.isDirected = isDirected;
+    }
+
     //Creates an AdjacencyListGraph from a .txt file
     private static AdjacencyListGraph createGraph(File file) throws FileNotFoundException {
         Scanner scan = new Scanner(file);
@@ -28,10 +34,10 @@ public class AdjacencyListGraph {
         isDirected = graphType.equals("directed");
         scan.nextLine();
         int numVertices = scan.nextInt();
-        totalVertices = numVertices;
+        //totalVertices = numVertices;
         scan.nextLine();
-        numEdges = scan.nextInt();
-        totalEdges = numEdges;
+        int numEdges = scan.nextInt();
+        //totalEdges = numEdges;
 
         AdjacencyListGraph adj = new AdjacencyListGraph(numVertices);
 
@@ -68,7 +74,7 @@ public class AdjacencyListGraph {
     }
 
     //Inserts a vertex that is specified by the user
-    private static void addVertex(Scanner input, AdjacencyListGraph adj) {
+    private void addVertex(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the number of vertices you want to add: ");
         int numAdd = input.nextInt();
         int a = 1;
@@ -78,7 +84,7 @@ public class AdjacencyListGraph {
             adj.insertVertex(inputVertex);
             a++;
         }
-        totalVertices++;
+        //this.totalVertices++;
         adj.printList();
     }
 
@@ -89,15 +95,20 @@ public class AdjacencyListGraph {
         if (!isDirected) {
             destination.getEdgeList().add(edge);
         }
-        edgeList.add(edge);
+        this.edgeList.add(edge);
     }
 
     private void insertEdge(Vertex origin, Vertex destination) {
-
+        Edge edge = new Edge(origin, destination);
+        origin.getEdgeList().add(edge);
+        if (!isDirected) {
+            destination.getEdgeList().add(edge);
+        }
+        this.edgeList.add(edge);
     }
 
     //Inserts an edge that is specified by the user
-    private static void addEdge(Scanner input, AdjacencyListGraph adj) {
+    private void addEdge(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the number of edges you want to add: ");
         int numAdd = input.nextInt();
         int a = 1;
@@ -112,7 +123,7 @@ public class AdjacencyListGraph {
             a++;
             adj.insertEdge(origin, destination, usedLabel);
         }
-        totalEdges++;
+        //totalEdges++;
         adj.printList();
     }
 
@@ -130,11 +141,11 @@ public class AdjacencyListGraph {
             destination.getEdgeList().remove(foundEdge);
         }
         edgeList.remove(foundEdge);
-        totalEdges--;
+        //totalEdges--;
     }
 
     //Removes an edge that is specified by the user
-    private static void removeEdge(Scanner input, AdjacencyListGraph adj) {
+    private void removeEdge(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the number of edges you want removed: ");
         int numRemove = input.nextInt();
         while (numRemove > numEdges) {
@@ -164,14 +175,14 @@ public class AdjacencyListGraph {
     //Gets the neighboring vertices of a vertex in the Adjacency List
     private ArrayList<Vertex> getNeighbors(Vertex vertex) {
         ArrayList<Vertex> neighborsList = new ArrayList<>();
-        for (Edge edge : vertex.getEdgeList()) {
-            neighborsList.add(edge.opposite(vertex));
+        for (Edge newEdge : vertex.getEdgeList()) {
+            neighborsList.add(newEdge.opposite(vertexList.get(vertex.getLabel() - 1)));
         }
         return neighborsList;
     }
 
     //Gets the neighboring vertices of a vertex that is specified by the user
-    private static void neighborOf(Scanner input, AdjacencyListGraph adj) {
+    private void neighborOf(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the vertex to see the neighboring vertices: ");
         int seeVertex = input.nextInt();
         try {
@@ -186,7 +197,7 @@ public class AdjacencyListGraph {
 
     //Searches for a vertex to check graph connectivity
     private boolean search(Vertex vertex) {
-        boolean[] marked = new boolean[totalVertices];
+        boolean[] marked = new boolean[vertexList.size()];
         boolean isConnected = true;
         marked[vertex.getLabel() - 1] = true;
         ArrayList<Vertex> markedVertices = new ArrayList<>();
@@ -213,7 +224,7 @@ public class AdjacencyListGraph {
     }
 
     //Searches for a vertex that is specified by the user to check graph connectivity
-    private static void vertexSearch(Scanner input, AdjacencyListGraph adj) {
+    private void vertexSearch(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the vertex that you would like to search: ");
         int v = input.nextInt();
         Vertex vertex = adj.vertexList.get(v - 1);
@@ -231,8 +242,8 @@ public class AdjacencyListGraph {
     //Searches for a path between two vertices
     private ArrayList<Vertex> search2(Vertex origin, Vertex destination) {
         ArrayList<Vertex> vertexPath = new ArrayList<>();
-        boolean[] marked = new boolean[totalVertices];
-        Vertex[] parent = new Vertex[totalVertices];
+        boolean[] marked = new boolean[vertexList.size()];
+        Vertex[] parent = new Vertex[vertexList.size()];
 
         marked[origin.getLabel() - 1] = true;
         ArrayList<Vertex> markedVertices = new ArrayList<>();
@@ -266,7 +277,7 @@ public class AdjacencyListGraph {
     }
 
     //Searches for a path between two vertices that are specified by the user
-    private static void pathSearch(Scanner input, AdjacencyListGraph adj) {
+    private void pathSearch(Scanner input, AdjacencyListGraph adj) {
         System.out.println("Specify the origin vertex that you would like to start at: ");
         int originLabel = input.nextInt();
         Vertex origin = adj.vertexList.get(originLabel - 1);
@@ -278,7 +289,7 @@ public class AdjacencyListGraph {
     }
 
     //Searches for bridges in the Adjacency List
-    private static void searchBridge(AdjacencyListGraph adj) {
+    private void searchBridge(AdjacencyListGraph adj) {
         ArrayList<Edge> edgeCopy = new ArrayList<>(adj.edgeList);
 
         for (Edge edge : edgeCopy) {
@@ -294,40 +305,46 @@ public class AdjacencyListGraph {
         }
     }
 
-    private static AdjacencyListGraph createResidualGraph(int vertices, int edges) {
-        AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertices); // creates a residual graph with same # of vertices and edges (not specified)
-        for (Vertex vertex: residualGraph.vertexList) {
-            //need to add edges to the edgelist of each vertex
-        }
-        for (Edge edge : residualGraph.edgeList) { // edgeList is currently empty - needs to be scanned from file first
-            if (edge.getLabel() == 1) {
-                residualGraph.insertEdge(edge.getDestination(), edge.getOrigin(), 0); //v -> u
+    private AdjacencyListGraph createResidualGraph() {
+        AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertexList.size(), true); // creates a residual graph with same # of vertices and edges (not specified)
+        this.vertexList = residualGraph.vertexList;
+        for (Edge edge: edgeList) {
+            Vertex origin = edge.getOrigin();
+            edge.setOrigin(vertexList.get(origin.getLabel() - 1));
+            Vertex newOrigin = edge.getOrigin();
+
+            Vertex destination = edge.getDestination(); // refers to original destination
+            edge.setDestination(vertexList.get(destination.getLabel() - 1));
+            Vertex newDestination = edge.getDestination();
+            if (edge.getLabel() == 0) {
+                residualGraph.insertEdge(newOrigin, newDestination);
             } else {
-                residualGraph.insertEdge(edge.getOrigin(), edge.getDestination(), 0); //u -> v
+                residualGraph.insertEdge(newDestination, newOrigin);
             }
         }
+        this.edgeList = residualGraph.edgeList;
         return residualGraph;
     }
     private Edge getEdge(Vertex origin, Vertex destination) { // works as expected
         Edge foundEdge = null;
         for (Edge edge : origin.getEdgeList()) {
-            if ((edge.getOrigin() == origin && edge.getDestination() == destination && edge.getLabel() == 0) ||
-                    (edge.getOrigin() == destination && edge.getDestination() == origin && edge.getLabel() == 1)) {
+            if ((vertexList.get(origin.getLabel() - 1)  == origin && edge.getDestination() == destination && edge.getLabel() == 0) ||
+                    (vertexList.get(origin.getLabel() - 1) == destination && edge.getDestination() == origin && edge.getLabel() == 1)) {
                 foundEdge = edge;
             }
         }
         return foundEdge;
     }
 
-    private void augmentFlow(ArrayList<Vertex> vertexPath) {
+    private void augmentFlow(ArrayList<Vertex> vertexPath) { //should be boolean
         for (int i = 0; i < vertexPath.size() - 1; i++) {
             Vertex origin = vertexPath.get(i);
             Vertex destination = vertexPath.get(i + 1);
-            Edge edge = getEdge(origin, destination);
+            Edge edge = this.getEdge(origin, destination); //gets the edge connecting the origin and destination
             if (edge.getLabel() == 0) { //edge.setLabel(1-edge.getLabel()); alternative
-                edge.setLabel(1);
+                edge.setLabel(1); //labels unused edge to used edge
             } else {
-                edge.setLabel(0);
+                edge.setLabel(0);// labels used edge to unused edge
             }
         }
     }
@@ -335,14 +352,17 @@ public class AdjacencyListGraph {
     private int getNumberOfPaths(Vertex origin, Vertex destination) {
         int pathCount = 0;
         while (true) {
-            AdjacencyListGraph residualGraph = createResidualGraph(totalVertices, totalEdges); // unsure what to do with the residualGraph here
-            ArrayList<Vertex> vertexPath = search2(origin, destination);
+            AdjacencyListGraph residualGraph = createResidualGraph();
+            Vertex newOrigin = residualGraph.vertexList.get(origin.getLabel() - 1);
+            Vertex newDestination = residualGraph.vertexList.get(destination.getLabel() - 1);
+            ArrayList<Vertex> vertexPath = search2(newOrigin, newDestination);
             if (vertexPath == null) {
                 break;
             }
-            augmentFlow(vertexPath);
+            residualGraph.augmentFlow(vertexPath);
             pathCount++;
         }
+        System.out.println("The edge connectivity is " + pathCount + ".");
         return pathCount;
     }
 
@@ -359,7 +379,7 @@ public class AdjacencyListGraph {
     //Prints the current Adjacency List
     private void printList() {
         System.out.print("\nCurrent Adjacency List:");
-        for (int i = 1; i <= totalVertices; i++) {
+        for (int i = 1; i <= vertexList.size(); i++) {
             System.out.print("\n" + vertexList.get(i - 1).getLabel() + " => [");
             Vertex currentVertex = vertexList.get(i - 1);
             for (Edge edge : currentVertex.getEdgeList()) {
@@ -367,7 +387,7 @@ public class AdjacencyListGraph {
             }
             System.out.print("]");
         }
-        System.out.println("\nNumber of edges: " + totalEdges);
+        System.out.println("\nNumber of edges: " + edgeList.size());
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -381,13 +401,13 @@ public class AdjacencyListGraph {
             System.out.println("'add edge', 'remove edge', 'add vertex', 'neighbor', 'search vertex', 'search path', 'search bridge', 'edge connectivity', 'exit'");
             String userChoice = input.nextLine();
             switch (userChoice.toLowerCase()) {
-                case "add edge" -> addEdge(input,graph);
-                case "remove edge" -> removeEdge(input,graph);
-                case "add vertex" -> addVertex(input, graph);
-                case "neighbor" -> neighborOf(input,graph);
-                case "search vertex" -> vertexSearch(input, graph);
-                case "search path" -> pathSearch(input, graph);
-                case "search bridge" -> searchBridge(graph);
+                case "add edge" -> graph.addEdge(input,graph);
+                case "remove edge" -> graph.removeEdge(input,graph);
+                case "add vertex" -> graph.addVertex(input, graph);
+                case "neighbor" -> graph.neighborOf(input,graph);
+                case "search vertex" -> graph.vertexSearch(input, graph);
+                case "search path" -> graph.pathSearch(input, graph);
+                case "search bridge" -> graph.searchBridge(graph);
                 case "edge connectivity" -> edgeConnectivity(input, graph);
                 case "exit" -> close = true;
                 default -> System.out.println("No such action exists.");
