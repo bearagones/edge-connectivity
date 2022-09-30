@@ -9,6 +9,11 @@ public class Edge {
         this.label = label;
     }
 
+    public Edge(Vertex origin, Vertex destination) {
+        this.origin = origin;
+        this.destination = destination;
+    }
+
     public Vertex opposite(Vertex w) {
         if (w == origin) {
             return destination;
