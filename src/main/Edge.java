@@ -15,9 +15,9 @@ public class Edge {
     }
 
     public Vertex opposite(Vertex w) {
-        if (w == origin) {
+        if (w.getLabel() == origin.getLabel()) {
             return destination;
-        } else if (w == destination) {
+        } else if (w.getLabel() == destination.getLabel()) {
             return origin;
         } else {
             return null;
