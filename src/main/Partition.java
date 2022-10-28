@@ -2,7 +2,11 @@ import java.util.HashMap;
 
 public class Partition {
 
-    HashMap<Vertex, Cluster> clusterMap;
+    HashMap<Vertex, Cluster> clusterMap = new HashMap<>();
+
+    public Partition() {
+
+    }
 
     public Cluster find(Cluster c) {
         return c.head;
@@ -18,31 +22,32 @@ public class Partition {
 
         if (a.size > b.size) {
             a.tail.next = b;
-            Cluster iter = b;
+            Cluster temp = b;
 
-            while (iter != null) {
-                iter.head = a;
-                iter = iter.next;
+            while (temp != null) {
+                temp.head = a;
+                temp = temp.next;
             }
             a.tail = b.tail;
             a.size += b.size;
 
         } else {
             b.tail.next = a;
-            Cluster iter = a;
+            Cluster temp = a;
 
-            while (iter != null) {
-                iter.head = b;
-                iter = iter.next;
+            while (temp != null) {
+                temp.head = b;
+                temp = temp.next;
             }
             b.tail = a.tail;
             b.size += a.size;
         }
     }
 
-    public void makeCluster(Vertex v) {
+    public Cluster makeCluster(Vertex v) {
         Cluster c = new Cluster();
         clusterMap.put(v, c);
+        return c;
     }
 }
 
@@ -56,6 +61,7 @@ class Cluster {
     public Cluster() {
         next = null;
         head = this;
+        tail = head;
         size = 1;
     }
 }

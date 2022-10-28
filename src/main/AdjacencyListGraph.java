@@ -416,59 +416,33 @@ public class AdjacencyListGraph {
         // arraylist to hold the list of edges
         ArrayList<Vertex> vertexTreeList = new ArrayList<>();
 
+        Partition tree = new Partition();
         // gives weights to the edges in ascending order (already sorted)
 //        for (int i = 0; i < edgeList.size(); i++) {
 //            edgeList.get(i).setLabel(i + 1);
 //        }
 
+        for (Vertex vertex : vertexList) {
+           tree.makeCluster(vertex);
+        }
+
         // sorts the edges by weight/label
         edgeList.sort(Comparator.comparing(Edge::getLabel));
 
-        // loops until number of edges = number of vertices - 1
+        int i = 0;
         while (spanningTree.edgeList.size() < vertexList.size() - 1) {
-            // iterates through entire edge list
-            for (Edge edge : edgeList) {
-
-                Vertex origin = edge.getOrigin();
-                Vertex destination = edge.getDestination();
-
-                // if the origin vertex is not part of the spanning tree yet
-                if (!vertexTreeList.contains(origin)) {
-                    // add the vertex to the tree
-                    vertexTreeList.add(origin);
-                    // insert the edge into the tree
-                    spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
-                    spanningTree.edgeList.add(edge);
-                }
-                // if the destination vertex is not part of the spanning tree yet
-                if (!vertexTreeList.contains(destination)) {
-                    // add the vertex to the tree
-                    vertexTreeList.add(destination);
-                    // if the edge is not in the spanning tree yet
-                    if (!spanningTree.edgeList.contains(edge)) {
-                        // insert the edge into the tree
-                        spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
-                        spanningTree.edgeList.add(edge);
-                    }
-                }
-
-                // for connecting clusters
-                Vertex newOrigin = spanningTree.vertexList.get(origin.getLabel() - 1);
-                Vertex newDestination = spanningTree.vertexList.get(destination.getLabel() - 1);
-
-                ArrayList<Vertex> vertexTreePath = search2(newOrigin, newDestination);
-
-                if (vertexTreePath == null && !spanningTree.edgeList.contains(edge)) {
-                    spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
-                    spanningTree.vertexList.get(destination.getLabel() - 1).getEdgeList().add(edge);
-                    spanningTree.edgeList.add(edge);
-                }
+            Edge edge = edgeList.get(i);
+            if (!tree.isSameCluster(edge.getOrigin(), edge.getDestination())) {
+                spanningTree.edgeList.add(edge);
+                tree.union(edge.getOrigin(), edge.getDestination());
             }
+            i++;
         }
 
         for (Edge edge : spanningTree.edgeList) {
             System.out.println(edge + ": weight " + edge.getLabel());
         }
+
         return spanningTree.edgeList;
     }
 
