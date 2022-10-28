@@ -221,6 +221,7 @@ public class AdjacencyListGraph {
     }
 
     //Searches for a vertex that is specified by the user to check graph connectivity
+
     private void vertexSearch(Scanner input, AdjacencyListGraph adj) {
         System.out.print("\nSpecify the vertex that you would like to search: ");
         int v = input.nextInt();
@@ -247,7 +248,7 @@ public class AdjacencyListGraph {
         markedVertices.add(origin);
         parent[origin.getLabel() - 1] = origin;
 
-        System.out.print("Path from [" + origin + "] to [" + destination + "]: ");
+        //System.out.print("Path from [" + origin + "] to [" + destination + "]: ");
         while (!markedVertices.isEmpty()) {
             Vertex markedVertex = markedVertices.remove(0);
             for (Vertex neighbor : getNeighbors(markedVertex)) {
@@ -260,7 +261,7 @@ public class AdjacencyListGraph {
         }
 
         if (parent[destination.getLabel() - 1] == null) {
-            System.out.println("There is no path between the specified vertices.");
+            //System.out.println("There is no path between the specified vertices.");
             return null;
         }
         Vertex currently = destination;
@@ -269,7 +270,7 @@ public class AdjacencyListGraph {
             currently = parent[currently.getLabel() - 1];
             vertexPath.add(0, currently);
         }
-        System.out.println(vertexPath);
+        //System.out.println(vertexPath);
         return vertexPath;
     }
 
@@ -302,10 +303,10 @@ public class AdjacencyListGraph {
         }
     }
 
-
     private Vertex getIthVertex(int i) {
         return vertexList.get(i-1);
     }
+
     private AdjacencyListGraph createResidualGraph() {
         AdjacencyListGraph residualGraph = new AdjacencyListGraph(vertexList.size(), true); // creates a residual graph with same # of vertices and edges (not specified)
         //this.vertexList = residualGraph.vertexList;
@@ -347,7 +348,6 @@ public class AdjacencyListGraph {
             }
         }
     }
-
 
     private int getNumberOfPaths(Vertex origin, Vertex destination) {
         for (Edge edge : edgeList) {
@@ -409,6 +409,69 @@ public class AdjacencyListGraph {
         return m;
     }
 
+    private ArrayList<Edge> kruskal() {
+
+        AdjacencyListGraph spanningTree = new AdjacencyListGraph(vertexList.size());
+
+        // arraylist to hold the list of edges
+        ArrayList<Vertex> vertexTreeList = new ArrayList<>();
+
+        // gives weights to the edges in ascending order (already sorted)
+//        for (int i = 0; i < edgeList.size(); i++) {
+//            edgeList.get(i).setLabel(i + 1);
+//        }
+
+        // sorts the edges by weight/label
+        edgeList.sort(Comparator.comparing(Edge::getLabel));
+
+        // loops until number of edges = number of vertices - 1
+        while (spanningTree.edgeList.size() < vertexList.size() - 1) {
+            // iterates through entire edge list
+            for (Edge edge : edgeList) {
+
+                Vertex origin = edge.getOrigin();
+                Vertex destination = edge.getDestination();
+
+                // if the origin vertex is not part of the spanning tree yet
+                if (!vertexTreeList.contains(origin)) {
+                    // add the vertex to the tree
+                    vertexTreeList.add(origin);
+                    // insert the edge into the tree
+                    spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
+                    spanningTree.edgeList.add(edge);
+                }
+                // if the destination vertex is not part of the spanning tree yet
+                if (!vertexTreeList.contains(destination)) {
+                    // add the vertex to the tree
+                    vertexTreeList.add(destination);
+                    // if the edge is not in the spanning tree yet
+                    if (!spanningTree.edgeList.contains(edge)) {
+                        // insert the edge into the tree
+                        spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
+                        spanningTree.edgeList.add(edge);
+                    }
+                }
+
+                // for connecting clusters
+                Vertex newOrigin = spanningTree.vertexList.get(origin.getLabel() - 1);
+                Vertex newDestination = spanningTree.vertexList.get(destination.getLabel() - 1);
+
+                ArrayList<Vertex> vertexTreePath = search2(newOrigin, newDestination);
+
+                if (vertexTreePath == null && !spanningTree.edgeList.contains(edge)) {
+                    spanningTree.vertexList.get(origin.getLabel() - 1).getEdgeList().add(edge);
+                    spanningTree.vertexList.get(destination.getLabel() - 1).getEdgeList().add(edge);
+                    spanningTree.edgeList.add(edge);
+                }
+            }
+        }
+
+        for (Edge edge : spanningTree.edgeList) {
+            System.out.println(edge + ": weight " + edge.getLabel());
+        }
+        return spanningTree.edgeList;
+    }
+
     //Prints the current Adjacency List
     public void printList() {
         System.out.print("\nCurrent Adjacency List:");
@@ -444,6 +507,7 @@ public class AdjacencyListGraph {
                 case "search bridge" -> graph.searchBridge(graph);
                 case "edge connectivity" -> edgeConnectivity(input, graph);
                 case "global min" -> graph.getMinNumberOfPaths();
+                case "kruskal" -> graph.kruskal();
                 case "exit" -> close = true;
                 default -> System.out.println("No such action exists.");
             }
