@@ -5,7 +5,6 @@ public class Partition {
     HashMap<Vertex, Cluster> clusterMap = new HashMap<>();
 
     public Partition() {
-
     }
 
     public Cluster find(Cluster c) {

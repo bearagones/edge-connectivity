@@ -2,11 +2,15 @@ public class Edge {
     private Vertex origin;
     private Vertex destination;
     private int label;
+    private Edge parent;
+    private int forest;
 
     public Edge(Vertex origin, Vertex destination, int label) {
         this.origin = origin;
         this.destination = destination;
         this.label = label;
+        this.parent = null;
+        this.forest = 0;
     }
 
     public Edge(Vertex origin, Vertex destination) {
@@ -48,8 +52,25 @@ public class Edge {
         this.label = label;
     }
 
+    public int getForest() {
+        return forest;
+    }
+
+    public void setForest(int forest) {
+        this.forest = forest;
+    }
+
+    public Edge getParent() {
+        return parent;
+    }
+
+    public void setParent(Edge parent) {
+        this.parent = parent;
+    }
+
     @Override
     public String toString() {
         return "(" + origin + "," + destination + ")";
     }
+
 }
