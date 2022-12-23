@@ -32,16 +32,8 @@ public class Edge {
         return origin;
     }
 
-    public void setOrigin(Vertex origin) {
-        this.origin = origin;
-    }
-
     public Vertex getDestination() {
         return destination;
-    }
-
-    public void setDestination(Vertex destination) {
-        this.destination = destination;
     }
 
     public int getLabel() {
